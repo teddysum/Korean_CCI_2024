@@ -1,7 +1,7 @@
 # 대화 맥락 추론 Baseline
-본 소스 코드는 '국립국어원 인공지능의 한국어 능력 평가' 시범 운영 과제 중 '대화 맥락 추론'에 대한 베이스라인 모델의 학습과 평가를 재현하기 위한 코드입니다.  
+본 리포지토리는 '2024년 국립국어원 인공지능의 한국어 능력 평가' 경진 대회 과제 중 '대화 맥락 추론'에 대한 베이스라인 모델의 학습과 평가를 재현하기 위한 코드를 포함하고 있습니다.  
 
-학습, 추론 및 평가는 아래의 실행 방법(How to Run)에서 확인하실 수 있습니다.  
+학습 및 추론의 실행 방법(How to Run)은 아래에서 확인하실 수 있습니다.  
 
 |Model|Accuracy|
 |:---:|---:|
@@ -57,9 +57,10 @@ src
         "inference_2": "화자2가 사는 곳 근처에서 싱크홀 보수 공사가 진행되고 있다.",
         "inference_3": "화자2가 사는 곳 근처에서 싱크홀 보수 공사가 중단되었다."
     },
-    "output": 2     # The Correct answer is inference_2
+    "output": "inference_2" # The Correct answer is inference_2
 }
 ```
+
 ## 실행 방법 (How to Run)
 ### 학습 (Train)
 ```
@@ -82,5 +83,5 @@ python -m run.test \
 ## Reference
 
 huggingface/transformers (https://github.com/huggingface/transformers)  
-Bllossome (Teddysum) ((https://huggingface.co/MLP-KTLim/llama-3-Korean-Bllossom-8B)  
+Bllossome (Teddysum) (https://huggingface.co/MLP-KTLim/llama-3-Korean-Bllossom-8B)  
 국립국어원 인공지능 (AI)말평 (https://kli.korean.go.kr/benchmark)  
