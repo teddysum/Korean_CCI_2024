@@ -71,7 +71,6 @@ CUDA_VISIBLE_DEVICES=1,3 python -m run.train \
     --lr 2e-5 \
     --gradient_accumulation_steps 64
 ```
-[학습에 대한 설명]
 
 ### 추론 (Inference)
 ```
@@ -80,7 +79,6 @@ python -m run.test \
     --model_id MLP-KTLim/llama-3-Korean-Bllossom-8B \
     --device cuda:0
 ```
-[추론에 대한 설명]
 
 
 ## Reference
