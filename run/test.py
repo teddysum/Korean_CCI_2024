@@ -1,8 +1,10 @@
 
 import argparse
+import json
 import tqdm
 
 import torch
+import numpy
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from src.data import CustomDataset
@@ -12,10 +14,10 @@ from src.data import CustomDataset
 parser = argparse.ArgumentParser(prog="test", description="Testing about Conversational Context Inference.")
 
 g = parser.add_argument_group("Common Parameter")
-g.add_argument("--output", type=str, required=True, help="output directory path to save artifacts")
-g.add_argument("--model_id", type=str, required=True, help="model file path")
-g.add_argument("--tokenizer", type=str, help="huggingface tokenizer path")
-g.add_argument("--device", type=str, required=True, help="the number of gpus")
+g.add_argument("--output", type=str, required=True, help="output filename")
+g.add_argument("--model_id", type=str, required=True, help="huggingface model id")
+g.add_argument("--tokenizer", type=str, help="huggingface tokenizer")
+g.add_argument("--device", type=str, required=True, help="device to load the model")
 # fmt: on
 
 
@@ -31,23 +33,29 @@ def main(args):
         args.tokenizer = args.model_id
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
 
-    # answer = [tokenizer.vocab['A'], tokenizer.vocab['B'], tokenizer.vocab['C']]
-    dataset = CustomDataset("resource/data/대화맥락추론_test.json", tokenizer, args.device)
+    dataset = CustomDataset("resource/data/대화맥락추론_test.json", tokenizer)
 
-    result = []
+    with open("resource/data/대화맥락추론_test.json", "r") as f:
+        result = json.load(f)
+        answer_dict = {
+            0: "inference_1",
+            1: "inference_2",
+            2: "inference_3",
+        }
+
     for idx in tqdm.tqdm(range(len(dataset))):
-        inp, oup = dataset[idx]
+        inp, _ = dataset[idx]
         outputs = model(
-            inp
+            inp.to(args.device)
         )
         logits = outputs.logits[:,-1].flatten()
         probs = (
             torch.nn.functional.softmax(
                 torch.tensor(
                     [
-                        logits[tokenizer("A").input_ids[-1]],
-                        logits[tokenizer("B").input_ids[-1]],
-                        logits[tokenizer("C").input_ids[-1]],
+                        logits[tokenizer.vocab['A']],
+                        logits[tokenizer.vocab['B']],
+                        logits[tokenizer.vocab['C']],
                     ]
                 ),
                 dim=0,
@@ -57,10 +65,11 @@ def main(args):
             .to(torch.float32)
             .numpy()
         )
-        result.append(str(probs))
+
+        result[idx]["output"] = answer_dict[numpy.argmax(probs)]
 
     with open(args.output, "w", encoding="utf-8") as f:
-        f.write("\n".join(result))
+        f.write(json.dumps(result, ensure_ascii=False, indent=4))
 
 
 if __name__ == "__main__":

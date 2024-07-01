@@ -1,16 +1,21 @@
 
 import json
-import pandas as pd
 
-from datasets import Dataset
-from tokenizers.processors import TemplateProcessing
+from torch.utils.data import Dataset
+
 
 class CustomDataset(Dataset):
-    def __init__(self, fname, tokenizer, device):
+    def __init__(self, fname, tokenizer):
         self.inp = []
-        self.oup = []
+        self.trg = []
 
         PROMPT = '''You are a helpful AI assistant. Please answer the user's questions kindly. 당신은 유능한 AI 어시스턴트 입니다. 사용자의 질문에 대해 친절하게 답변해주세요.'''
+        answer_dict = {
+            "": None,
+            "inference_1": 0,
+            "inference_2": 1,
+            "inference_3": 2
+        }
 
         with open(fname, "r") as f:
             data = json.load(f)
@@ -47,14 +52,14 @@ class CustomDataset(Dataset):
                 message,
                 add_generation_prompt=True,
                 return_tensors="pt",
-            ).to(device)
+            )
 
             self.inp.append(input_ids)
-            self.oup.append(example["output"])
+            self.trg.append(answer_dict[example["output"]])
 
     def __len__(self):
         return len(self.inp)
 
     def __getitem__(self, idx):
-        return self.inp[idx], self.oup[idx]
+        return self.inp[idx], self.trg[idx]
     

@@ -5,7 +5,8 @@
 
 |Model|Accuracy|
 |:---:|---:|
-|MLP-KTLim/llama-3-Korean-Bllossom-8B|0.0|
+|MLP-KTLim/llama-3-Korean-Bllossom-8B (without SFT)|0.697|
+|MLP-KTLim/llama-3-Korean-Bllossom-8B (with SFT)|0.0|
 
 ## 리포지토리 구조 (Repository Structure)
 ```
@@ -66,7 +67,11 @@ src
 ```
 python -m run.train \
     --model_id MLP-KTLim/llama-3-Korean-Bllossom-8B \
-    --device cuda:0
+    --device cuda:0 \
+    --epoch 5 \
+    --batch_size 16 \
+    --lr 2e-5 \
+    --gradient_accumulation_steps 10
 ```
 [학습에 대한 설명]
 
