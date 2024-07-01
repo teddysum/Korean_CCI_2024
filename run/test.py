@@ -32,21 +32,23 @@ def main(args):
     if args.tokenizer == None:
         args.tokenizer = args.model_id
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
-
+    tokenizer.pad_token = tokenizer.eos_token
+    
     dataset = CustomDataset("resource/data/대화맥락추론_test.json", tokenizer)
+
+    answer_dict = {
+        0: "inference_1",
+        1: "inference_2",
+        2: "inference_3",
+    }
 
     with open("resource/data/대화맥락추론_test.json", "r") as f:
         result = json.load(f)
-        answer_dict = {
-            0: "inference_1",
-            1: "inference_2",
-            2: "inference_3",
-        }
 
     for idx in tqdm.tqdm(range(len(dataset))):
         inp, _ = dataset[idx]
         outputs = model(
-            inp.to(args.device)
+            inp.to(args.device).unsqueeze(0)
         )
         logits = outputs.logits[:,-1].flatten()
         probs = (

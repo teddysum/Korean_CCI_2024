@@ -65,20 +65,18 @@ src
 ## 실행 방법 (How to Run)
 ### 학습 (Train)
 ```
-python -m run.train \
+CUDA_VISIBLE_DEVICES=1,3 python -m run.train \
     --model_id MLP-KTLim/llama-3-Korean-Bllossom-8B \
-    --device cuda:0 \
     --epoch 5 \
-    --batch_size 16 \
     --lr 2e-5 \
-    --gradient_accumulation_steps 10
+    --gradient_accumulation_steps 64
 ```
 [학습에 대한 설명]
 
 ### 추론 (Inference)
 ```
 python -m run.test \
-    --output output.txt \
+    --output result.json \
     --model_id MLP-KTLim/llama-3-Korean-Bllossom-8B \
     --device cuda:0
 ```
@@ -86,7 +84,6 @@ python -m run.test \
 
 
 ## Reference
-
 huggingface/transformers (https://github.com/huggingface/transformers)  
 Bllossome (Teddysum) (https://huggingface.co/MLP-KTLim/llama-3-Korean-Bllossom-8B)  
 국립국어원 인공지능 (AI)말평 (https://kli.korean.go.kr/benchmark)  
