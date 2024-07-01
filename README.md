@@ -19,10 +19,9 @@ run
 ├── test.py
 └── train.py
 
-# 학습에 사용될 커스텀 함수들을 보관하는 디렉토리
+# 학습에 사용될 함수들을 보관하는 디렉토리
 src
-├── data.py     # Custom Dataset
-└── utils.py
+└── data.py
 ```
 
 ## 데이터 형태 (Data Format)
