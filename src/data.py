@@ -58,15 +58,15 @@ class CustomDataset(Dataset):
                 return_tensors="pt",
             )
 
+            target = ""
             if example["output"] == "inference_1":
                 target = f"A. {example['input']['inference_1']}{tokenizer.eos_token}"
             elif example["output"] == "inference_2":
                 target = f"B. {example['input']['inference_2']}{tokenizer.eos_token}"
             elif example["output"] == "inference_3":
                 target = f"C. {example['input']['inference_3']}{tokenizer.eos_token}"
-            else:
-                target = ""
-            target = tokenizer(target+tokenizer.eos_token,
+                
+            target = tokenizer(target,
                       return_attention_mask=False,
                       add_special_tokens=False,
                       return_tensors="pt")
