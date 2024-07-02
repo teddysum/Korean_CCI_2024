@@ -66,7 +66,7 @@ class CustomDataset(Dataset):
                 target = f"C. {example['input']['inference_3']}{tokenizer.eos_token}"
             else:
                 target = ""
-            target = tokenizer(target,
+            target = tokenizer(target+tokenizer.eos_token,
                       return_attention_mask=False,
                       add_special_tokens=False,
                       return_tensors="pt")
