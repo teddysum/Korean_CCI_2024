@@ -26,6 +26,7 @@ def main(args):
         args.model_id,
         torch_dtype=torch.bfloat16,
         device_map=args.device,
+        use_cache=False,
     )
     model.eval()
 
@@ -45,30 +46,31 @@ def main(args):
     with open("resource/data/대화맥락추론_test.json", "r") as f:
         result = json.load(f)
 
-    for idx in tqdm.tqdm(range(len(dataset))):
-        inp, _ = dataset[idx]
-        outputs = model(
-            inp.to(args.device).unsqueeze(0)
-        )
-        logits = outputs.logits[:,-1].flatten()
-        probs = (
-            torch.nn.functional.softmax(
-                torch.tensor(
-                    [
-                        logits[tokenizer.vocab['A']],
-                        logits[tokenizer.vocab['B']],
-                        logits[tokenizer.vocab['C']],
-                    ]
-                ),
-                dim=0,
+    with torch.no_grad():
+        for idx in tqdm.tqdm(range(len(dataset))):
+            inp, _ = dataset[idx]
+            outputs = model(
+                inp.to(args.device).unsqueeze(0)
             )
-            .detach()
-            .cpu()
-            .to(torch.float32)
-            .numpy()
-        )
+            logits = outputs.logits[:,-1].flatten()
+            probs = (
+                torch.nn.functional.softmax(
+                    torch.tensor(
+                        [
+                            logits[tokenizer.vocab['A']],
+                            logits[tokenizer.vocab['B']],
+                            logits[tokenizer.vocab['C']],
+                        ]
+                    ),
+                    dim=0,
+                )
+                .detach()
+                .cpu()
+                .to(torch.float32)
+                .numpy()
+            )
 
-        result[idx]["output"] = answer_dict[numpy.argmax(probs)]
+            result[idx]["output"] = answer_dict[numpy.argmax(probs)]
 
     with open(args.output, "w", encoding="utf-8") as f:
         f.write(json.dumps(result, ensure_ascii=False, indent=4))
